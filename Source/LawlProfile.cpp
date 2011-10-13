@@ -8,7 +8,7 @@ BEGIN_LAWLPROFILE
 
 LawlProfiler::~LawlProfiler()
 {
-	clear(false);
+	Clear(false);
 }
 
 LawlProfiler& LawlProfiler::inst()
@@ -17,7 +17,7 @@ LawlProfiler& LawlProfiler::inst()
 	return p;
 }
 
-void LawlProfiler::clear(bool reset)
+void LawlProfiler::Clear(bool reset)
 {
 	if(_root)
 		delete _root;
@@ -25,7 +25,7 @@ void LawlProfiler::clear(bool reset)
 		_root = new PNode;
 }
 
-std::string LawlProfiler::dumpLog( const std::string& filename ) const
+std::string LawlProfiler::DumpLog( const std::string& filename ) const
 {
 	const char header[] = 
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\
@@ -62,13 +62,13 @@ std::string LawlProfiler::dumpLog( const std::string& filename ) const
 	ss << std::setprecision(2) << std::fixed;
 	ss << header << std::endl;
 	_line = 1;
-	treeTraverse(0, _root, ss);
+	TreeTraverse(0, _root, ss);
 	ss << "</tbody></table></body></html>" << std::endl;
 
 	return ss.str();
 }
 
-void LawlProfiler::enter( const std::string& name )
+void LawlProfiler::Enter( const std::string& name )
 {
 	// Check current hash map for existing child
 	if(_current->_children.find(name) == _current->_children.end())
@@ -84,13 +84,13 @@ void LawlProfiler::enter( const std::string& name )
 	++_current->_callCount;
 
 	// Capture start time
-	_current->_startTime = GetSysTime();
+	_current->_startTime = LP_Time::GetSysTime();
 }
 
-void LawlProfiler::exit()
+void LawlProfiler::Exit()
 {
 	// Capture end time
-	TimeVal diff = GetSysTime() - _current->_startTime;
+	LP_Time::TimeVal diff = LP_Time::GetSysTime() - _current->_startTime;
 
 	// Inc total time
 	_current->_totalTime += diff;
@@ -100,11 +100,11 @@ void LawlProfiler::exit()
 	assert(_current != NULL);
 }
 
-void LawlProfiler::treeTraverse( int depth, const PNode *current, 
+void LawlProfiler::TreeTraverse( int depth, const PNode *current, 
 							std::stringstream& ss ) const
 {
-	double t = ConvertSysTime(current->_totalTime) * 1000.0;
-	double childTime = ConvertSysTime(sumChildren(current)) * 1000.0;
+	double t = LP_Time::ConvertSysTime(current->_totalTime) * 1000.0;
+	double childTime = LP_Time::ConvertSysTime(SumChildren(current)) * 1000.0;
 	double inclusive = t - childTime;
 
 	if(_line % 2 == 0)
@@ -134,13 +134,13 @@ void LawlProfiler::treeTraverse( int depth, const PNode *current,
 		iter != current->_children.end();
 		++iter)
 	{
-		treeTraverse(depth+1, iter->second, ss);
+		TreeTraverse(depth+1, iter->second, ss);
 	}
 }
 
-TimeVal LawlProfiler::sumChildren( const PNode* node ) const
+LP_Time::TimeVal LawlProfiler::SumChildren( const PNode* node ) const
 {
-	TimeVal t = 0;
+	LP_Time::TimeVal t = 0;
 
 	for(PNodeMap::const_iterator iter = node->_children.begin();
 		iter != node->_children.end();

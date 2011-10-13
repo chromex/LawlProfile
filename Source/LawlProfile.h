@@ -5,14 +5,14 @@
 #include "LawlProfile_Time.h"
 
 #include <string>
-#include <unordered_map> /* tr1 pre-release VS2008 "feature pack" */
+#include <map>
 
 BEGIN_LAWLPROFILE
 
 class LawlProfiler
 {
 	struct PNode;
-	typedef std::tr1::unordered_map<std::string, PNode*> PNodeMap;
+	typedef std::map<std::string, PNode*> PNodeMap;
 
 	struct PNode
 	{
@@ -46,26 +46,26 @@ public:
 	static LawlProfiler& inst();
 
 	/* Clear the tree */
-	void clear(bool reset = true);
+	void Clear(bool reset = true);
 
 	/* Output */
-	std::string dumpLog(const std::string& filename) const;
+	std::string DumpLog(const std::string& filename) const;
 
 	/* Modifiers */
-	void enter(const std::string& name);
-	void exit();
+	void Enter(const std::string& name);
+	void Exit();
 
 	/* Simple object for auto timer release */
 	class AutoTimer
 	{
-	public: ~AutoTimer() {inst().exit();}
+	public: ~AutoTimer() {inst().Exit();}
 	};
 
 private:
 	/* Output helper */
-	void treeTraverse(int depth, const PNode *current, 
+	void TreeTraverse(int depth, const PNode *current, 
 		std::stringstream& ss) const;
-	LP_Time::TimeVal sumChildren(const PNode* node) const;
+	LP_Time::TimeVal SumChildren(const PNode* node) const;
 
 	/* Call tree */
 	PNode *_root;
@@ -81,8 +81,8 @@ private:
 };
 
 #ifdef LAWLPROFILE_PROF_ENABLED
-#define TIME_BEGIN(S) LawlProfiler::inst().enter(#S);
-#define TIME_END() LawlProfiler::inst().exit();
+#define TIME_BEGIN(S) LawlProfiler::inst().Enter(#S);
+#define TIME_END() LawlProfiler::inst().Exit();
 #define TIME_AUTO(S) LawlProfiler::AutoTimer __at; TIME_BEGIN(S)
 #elif
 #define TIME_BEGIN(S)
