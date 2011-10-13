@@ -1,0 +1,20 @@
+.TABLE_ASC,
+.TABLE_DESC,
+.TABLE_NONE {
+	padding-left: 10px;
+	padding-right: 12px;
+	background-color:#000000;
+	color: #FFFFFF;
+
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+
+.TABLE_ASC {
+	background-image: url(images/Arrow-DOWN.png);
+}
+
+.TABLE_DESC {
+	background-image: url(images/Arrow-UP.png);
+}
